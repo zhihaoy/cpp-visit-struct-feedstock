@@ -1,0 +1,42 @@
+{% set version = "1.0" %}
+{% set sha256 = "7152df2f6b0ce4c64d94a116073b196ec1e188a0a142a5138b016562f9bdc4e4" %}
+
+package:
+  name: visit-struct
+  version: {{ version }}
+
+source:
+  url: https://github.com/cbeck88/visit_struct/archive/v{{ version }}.zip
+  sha256: {{ sha256 }}
+  patches:
+    - 0001-cmake-build.patch
+
+build:
+  number: 0
+  skip: True  # [win and vc<14]
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - cmake >=3.1
+    - ninja
+  host: []  # Empty host dependency section
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/visit_struct/visit_struct.hpp         # [unix]
+    - test -f ${PREFIX}/share/visit_struct/visit_struct-config.cmake  # [unix]
+    - if exist %LIBRARY_PREFIX%\include\visit_struct\visit_struct.hpp (exit 0) else (exit 1)         # [win]
+    - if exist %LIBRARY_PREFIX%\share\visit_struct\visit_struct-config.cmake (exit 0) else (exit 1)  # [win]
+
+about:
+  home: https://github.com/cbeck88/visit_struct
+  license: Boost-1.0
+  license_file: LICENSE
+  summary: A miniature library for struct-field reflection in C++
+  description: |
+    A header-only library providing structure visitors for C++11 and C++14.
+
+extra:
+  recipe-maintainers:
+    - zhihao.yuan
